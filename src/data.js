@@ -3,21 +3,19 @@
 const Users = [
   {
     id: 1,
-    name: "Fikayo Adepoju",
-    email: "fik4christ@yahoo.com"
+    name: 'Fikayo Adepoju',
+    email: 'fik4christ@yahoo.com',
   },
   {
     id: 2,
-    name: "John Doe",
-    email: "john@company.com"
+    name: 'John Doe',
+    email: 'john@company.com',
   },
   {
     id: 3,
-    name: "Jane Paul",
-    email: "jane@company.com"
-  }
+    name: 'Jane Paul',
+    email: 'jane@company.com',
+  },
 ];
 
-export {
-  Users
-};
+export default Users;

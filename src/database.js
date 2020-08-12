@@ -1,14 +1,14 @@
 /* src/database.js */
 
-import { Users } from "./data";
-import low from "lowdb"
-import FileSync from "lowdb/adapters/FileSync"
-import fs from "fs"
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+import fs from 'fs';
+import Users from './data';
 
-const DATA_DIR = ".data"
+const DATA_DIR = '.data';
 
 async function startDatabase() {
-  if (!fs.existsSync(DATA_DIR)){
+  if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR);
   }
 
@@ -16,20 +16,16 @@ async function startDatabase() {
   const db = low(adapter);
 
   // Set some defaults (required if your JSON file is empty)
-  db.defaults({ users: [] })
-    .write();
+  db.defaults({ users: [] }).write();
 
   // Add users
-  db.set("users", Users)
-    .write();
+  db.set('users', Users).write();
 
   return db;
 }
 
 async function stopDatabase() {
+  console.log('stopping database');
 }
 
-export {
-  startDatabase,
-  stopDatabase,
-};
+export { startDatabase, stopDatabase };

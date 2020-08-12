@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "lint": "eslint .",
     "test:coverage": "npm test -- --coverage",
     "test:badges": "npm run test:coverage && jest-coverage-badges",
     "start": "npm run dev",
@@ -36,9 +37,15 @@
   },
   "devDependencies": {
     "@babel/node": "^7.10.5",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.5",
     "jest": "^26.2.2",
     "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
     "supertest": "^4.0.2"
   },
   "jest": {
