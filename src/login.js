@@ -9,7 +9,7 @@ const badRequest = (res, message) => {
   res.status(400).json({ message });
 };
 
-const validate = (req, res) => {
+const validate = (req) => {
   const { username, password } = req.body;
   if (!username) {
     badRequest('missing username');
