@@ -1,14 +1,22 @@
 /* src/resolvers.js */
 import jwt from 'jsonwebtoken';
 
+const unauthorized = (res) => {
+  res.status(401).json({ message: 'unauthorized' });
+};
+
+const badRequest = (res, message) => {
+  res.status(400).json({ message });
+};
+
 const validate = (req, res) => {
   const { username, password } = req.body;
   if (!username) {
-    res.status(400).json({ message: 'missing username' });
+    badRequest('missing username');
   }
 
   if (!password) {
-    res.status(400).json({ message: 'missing password' });
+    badRequest('missing password');
   }
 };
 
@@ -22,8 +30,16 @@ const login = (req, res) => {
       token,
     });
   } else {
-    res.status(401).json({ message: 'unauthorized' });
+    unauthorized(res);
   }
 };
 
-export default login;
+const verifyJwt = (err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    unauthorized(res);
+  } else {
+    next();
+  }
+};
+
+export { login, verifyJwt };

@@ -5,10 +5,11 @@ import { graphqlHTTP } from 'express-graphql';
 import expressPlayground from 'graphql-playground-middleware-express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+import jwt from 'express-jwt';
 import schema from './schema';
 import resolvers from './resolvers';
 import { startDatabase } from './database';
-import login from './login';
+import { login, verifyJwt } from './login';
 
 dotenv.config();
 
@@ -20,6 +21,13 @@ const context = async () => {
 };
 
 const app = express();
+
+app.use(
+  jwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] }).unless({
+    path: ['/login/token', '/playground', '/graphql'],
+  }),
+  verifyJwt
+);
 
 app.use(
   '/graphql',
@@ -35,4 +43,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/login/token', login);
 app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 
+app.get('/protected', (req, res) => {
+  res.json({ ok: 'ok' });
+});
 export default app;
