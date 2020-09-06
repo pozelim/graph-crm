@@ -3,7 +3,6 @@
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import fs from 'fs';
-import Users from './data';
 
 const DATA_DIR = '.data';
 
@@ -17,9 +16,6 @@ async function startDatabase() {
 
   // Set some defaults (required if your JSON file is empty)
   db.defaults({ users: [] }).write();
-
-  // Add users
-  db.set('users', Users).write();
 
   return db;
 }

@@ -5,7 +5,7 @@ import { buildSchema } from 'graphql';
 const schema = buildSchema(`
     type Query {
         users: [User!]!,
-        user(id: String!): User!
+        user(id: String!): User
     }
 
     input UserInput {
