@@ -1,8 +1,6 @@
-/* src/resolvers.js */
-
 import { v4 as uuidv4 } from 'uuid';
 
-const resolvers = {
+const userResolvers = {
   users: async (_, context) => {
     const { db } = await context();
     return db.get('users').value();
@@ -19,4 +17,4 @@ const resolvers = {
   },
 };
 
-export default resolvers;
+export default userResolvers;
