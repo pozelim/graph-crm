@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import supertest from 'supertest';
-import fs from 'fs';
 import mockedEnv from 'mocked-env';
 import app from '../src/server';
 import { getDataBase } from '../src/database';
@@ -9,20 +8,23 @@ const DB_TEST_FILE = 'db-test.json';
 
 mockedEnv({
   DB_FILE: DB_TEST_FILE,
-  JWT_SECRET: 'secret',
 });
 
 const request = supertest(app);
 
-afterAll(async () => {
-  fs.unlinkSync(`.data/${DB_TEST_FILE}`);
-});
-
-beforeEach(() => {
+function tearDown() {
   const db = getDataBase();
   if (db) {
     db.set('users', []).write();
   }
+}
+
+afterAll(() => {
+  tearDown();
+});
+
+beforeEach(() => {
+  tearDown();
 });
 
 function mockUserWithVariant(variant = 'a') {
