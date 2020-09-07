@@ -11,9 +11,13 @@ const userResolvers = {
   },
   createUser: async ({ input }, context) => {
     const { db } = await context();
-    const user = { id: uuidv4(), name: input.name, email: input.email };
-    db.get('users').push(user).write();
-    return user;
+    const duplicatedUser = db.get('users').find({ email: input.email }).value();
+    if (!duplicatedUser) {
+      const user = { id: uuidv4(), name: input.name, email: input.email };
+      db.get('users').push(user).write();
+      return user;
+    }
+    throw new Error('Email is already in use');
   },
 };
 

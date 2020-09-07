@@ -1,31 +1,53 @@
 /* eslint-disable no-undef */
 import supertest from 'supertest';
 import fs from 'fs';
+import mockedEnv from 'mocked-env';
 import app from '../src/server';
-import { stopDatabase } from '../src/database';
+import { stopDatabase, getDataBase } from '../src/database';
+
+const DB_TEST_FILE = 'db-test.json';
+
+mockedEnv({
+  DB_FILE: DB_TEST_FILE,
+  JWT_SECRET: 'secret',
+});
 
 const request = supertest(app);
 
 afterAll(async () => {
   await stopDatabase();
-  fs.unlinkSync('.data/db.json');
+  fs.unlinkSync(`.data/${DB_TEST_FILE}`);
 });
 
-function createUser() {
+beforeEach(() => {
+  const db = getDataBase();
+  if (db) {
+    db.set('users', []).write();
+  }
+});
+
+function mockUser(variant = 'a') {
+  return { name: `Dummy ${variant}`, email: `dummy_${variant}@dummy.com` };
+}
+
+function createUser(variant) {
+  const user = mockUser(variant);
   return request
     .post('/graphql')
     .send({
-      query:
-        'mutation { createUser(input: {name: "andy", email: "andy@gcrm.com"}) { id }}',
+      query: `mutation { createUser(input: {
+        name: "${user.name}"
+        email: "${user.email}"
+      }) { id }}`,
     })
     .set('Accept', 'application/json')
     .expect('Content-Type', /json/)
     .expect(200);
 }
 
-test('fetch users', async (done) => {
-  createUser().end(() => {});
-  createUser().end(() => {});
+it('fetch users', async (done) => {
+  createUser('a').end(() => {});
+  createUser('b').end(() => {});
   request
     .post('/graphql')
     .send({
@@ -45,10 +67,10 @@ test('fetch users', async (done) => {
     });
 });
 
-test('fetch user', async (done) => {
+it('fetch user', async (done) => {
   let userId;
-  createUser().end((createErr, createRes) => {
-    userId = createRes.body.data.createUser.id;
+  createUser().end((createdErr, createdRes) => {
+    userId = createdRes.body.data.createUser.id;
     request
       .post('/graphql')
       .send({
@@ -69,13 +91,26 @@ test('fetch user', async (done) => {
   });
 });
 
-test('create user', async (done) => {
+it('create user', async (done) => {
   createUser().end((err, res) => {
     if (err) {
       done(err);
     } else {
       expect(res.body).toBeInstanceOf(Object);
       expect(res.body.data.createUser.id).not.toBeNull();
+      done();
+    }
+  });
+});
+
+it('create user with duplicated email should fail', async (done) => {
+  createUser('a').end(() => {});
+  createUser('a').end((err, res) => {
+    if (err) {
+      done(err);
+    } else {
+      expect(res.body).toBeInstanceOf(Object);
+      expect(res.body.data.createUser).toBeNull();
       done();
     }
   });
