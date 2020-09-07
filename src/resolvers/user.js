@@ -35,7 +35,9 @@ const userResolvers = {
     if (!userRecord) {
       throw new Error('Not found');
     } else {
-      if (email && !emailValidator.validate(email)) {
+      if (isDuplicated(db, input)) {
+        throw new Error('Email is already in use');
+      } else if (email && !emailValidator.validate(email)) {
         throw new Error('Invalid email');
       }
       const userUpdated = { ...userRecord.value(), email, name };
