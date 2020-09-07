@@ -28,6 +28,21 @@ const userResolvers = {
       return user;
     }
   },
+  updateUser: async ({ input }, context) => {
+    const { id, email, name } = input;
+    const { db } = await context();
+    const userRecord = db.get('users').find({ id });
+    if (!userRecord) {
+      throw new Error('Not found');
+    } else {
+      if (email && !emailValidator.validate(email)) {
+        throw new Error('Invalid email');
+      }
+      const userUpdated = { ...userRecord.value(), email, name };
+      userRecord.assign(userUpdated).write();
+      return userUpdated;
+    }
+  },
 };
 
 export default userResolvers;

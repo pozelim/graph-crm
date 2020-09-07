@@ -20,9 +20,15 @@ const schema = buildSchema(`
         company(id: String!): Company
     }
 
-    input UserInput {
+    input CreateUserInput {
         name: String!
         email: String!
+    }
+
+    input UpdateUserInput {
+        id: ID!
+        name: String
+        email: String
     }
 
     input CompanyInput {
@@ -30,7 +36,8 @@ const schema = buildSchema(`
     }
 
     type Mutation {
-        createUser(input: UserInput): User
+        createUser(input: CreateUserInput!): User
+        updateUser(input: UpdateUserInput!): User
         createCompany(input: CompanyInput): Company
     }
 

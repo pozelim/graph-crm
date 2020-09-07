@@ -36,8 +36,8 @@ function createUser(user) {
     .post('/graphql')
     .send({
       query: `mutation { createUser(input: {
-        name: "${user.name}"
-        email: "${user.email}"
+        name: "${user.name}",
+        email: "${user.email}",
       }) { id }}`,
     })
     .set('Accept', 'application/json')
@@ -72,13 +72,12 @@ it('fetch users', async (done) => {
 });
 
 it('fetch user', async (done) => {
-  let userId;
   createUserWithVariant().end((createdErr, createdRes) => {
-    userId = createdRes.body.data.createUser.id;
+    const { id } = createdRes.body.data.createUser;
     request
       .post('/graphql')
       .send({
-        query: `{ user(id:"${userId}") { id, name } }`,
+        query: `{ user(id:"${id}") { id, name } }`,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -131,5 +130,35 @@ it('create user with invalid email should fail', async (done) => {
       expect(res.body.data.createUser).toBeNull();
       done();
     }
+  });
+});
+
+it('update user', async (done) => {
+  createUserWithVariant().end((createdErr, createdRes) => {
+    const { id } = createdRes.body.data.createUser;
+    const user = mockUserWithVariant('b');
+    request
+      .post('/graphql')
+      .send({
+        query: `mutation { updateUser(input: {
+          id: "${id}",
+          name: "${user.name}",
+          email: "${user.email}",
+        }) { id, name, email }}`,
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        } else {
+          expect(res.body).toBeInstanceOf(Object);
+          expect(res.body.data.updateUser).not.toBeNull();
+          expect(res.body.data.updateUser.name).toEqual(user.name);
+          expect(res.body.data.updateUser.email).toEqual(user.email);
+          done();
+        }
+      });
   });
 });

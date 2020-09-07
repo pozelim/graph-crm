@@ -4,7 +4,7 @@ import mockedEnv from 'mocked-env';
 import app from '../src/server';
 import { getDataBase } from '../src/database';
 
-const DB_TEST_FILE = 'db_test_company_resolvers.json';
+const DB_TEST_FILE = 'db-test_company_resolvers.json';
 
 mockedEnv({
   DB_FILE: DB_TEST_FILE,
