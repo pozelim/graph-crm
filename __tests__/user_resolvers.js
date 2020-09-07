@@ -26,12 +26,15 @@ beforeEach(() => {
   }
 });
 
-function mockUser(variant = 'a') {
+function mockUserWithVariant(variant = 'a') {
   return { name: `Dummy ${variant}`, email: `dummy_${variant}@dummy.com` };
 }
 
-function createUser(variant) {
-  const user = mockUser(variant);
+function createUserWithVariant(variant) {
+  return createUser(mockUserWithVariant(variant));
+}
+
+function createUser(user) {
   return request
     .post('/graphql')
     .send({
@@ -46,8 +49,8 @@ function createUser(variant) {
 }
 
 it('fetch users', async (done) => {
-  createUser('a').end(() => {});
-  createUser('b').end(() => {});
+  createUserWithVariant('a').end(() => {});
+  createUserWithVariant('b').end(() => {});
   request
     .post('/graphql')
     .send({
@@ -69,7 +72,7 @@ it('fetch users', async (done) => {
 
 it('fetch user', async (done) => {
   let userId;
-  createUser().end((createdErr, createdRes) => {
+  createUserWithVariant().end((createdErr, createdRes) => {
     userId = createdRes.body.data.createUser.id;
     request
       .post('/graphql')
@@ -92,7 +95,7 @@ it('fetch user', async (done) => {
 });
 
 it('create user', async (done) => {
-  createUser().end((err, res) => {
+  createUserWithVariant().end((err, res) => {
     if (err) {
       done(err);
     } else {
@@ -104,8 +107,22 @@ it('create user', async (done) => {
 });
 
 it('create user with duplicated email should fail', async (done) => {
-  createUser('a').end(() => {});
-  createUser('a').end((err, res) => {
+  createUserWithVariant('a').end(() => {});
+  createUserWithVariant('a').end((err, res) => {
+    if (err) {
+      done(err);
+    } else {
+      expect(res.body).toBeInstanceOf(Object);
+      expect(res.body.data.createUser).toBeNull();
+      done();
+    }
+  });
+});
+
+it('create user with invalid email should fail', async (done) => {
+  const user = createUserWithVariant('invalid_mail');
+  user.email = 'invalid mail';
+  createUser(user).end((err, res) => {
     if (err) {
       done(err);
     } else {

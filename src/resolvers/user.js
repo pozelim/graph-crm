@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import emailValidator from 'email-validator';
 
 const userResolvers = {
   users: async (_, context) => {
@@ -12,12 +13,15 @@ const userResolvers = {
   createUser: async ({ input }, context) => {
     const { db } = await context();
     const duplicatedUser = db.get('users').find({ email: input.email }).value();
-    if (!duplicatedUser) {
+    if (duplicatedUser) {
+      throw new Error('Email is already in use');
+    } else if (!emailValidator.validate(input.email)) {
+      throw new Error('Invalid email');
+    } else {
       const user = { id: uuidv4(), name: input.name, email: input.email };
       db.get('users').push(user).write();
       return user;
     }
-    throw new Error('Email is already in use');
   },
 };
 
