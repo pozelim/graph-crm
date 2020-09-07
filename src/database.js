@@ -18,17 +18,13 @@ async function startDatabase() {
   db = low(adapter);
 
   // Set some defaults (required if your JSON file is empty)
-  db.defaults({ users: [] }).write();
+  db.defaults({ users: [], companies: [] }).write();
 
   return db;
-}
-
-async function stopDatabase() {
-  console.log('stopping database');
 }
 
 function getDataBase() {
   return db;
 }
 
-export { startDatabase, stopDatabase, getDataBase };
+export { startDatabase, getDataBase };

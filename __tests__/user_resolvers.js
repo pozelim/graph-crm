@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import fs from 'fs';
 import mockedEnv from 'mocked-env';
 import app from '../src/server';
-import { stopDatabase, getDataBase } from '../src/database';
+import { getDataBase } from '../src/database';
 
 const DB_TEST_FILE = 'db-test.json';
 
@@ -15,7 +15,6 @@ mockedEnv({
 const request = supertest(app);
 
 afterAll(async () => {
-  await stopDatabase();
   fs.unlinkSync(`.data/${DB_TEST_FILE}`);
 });
 
