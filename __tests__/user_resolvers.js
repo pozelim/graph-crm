@@ -30,10 +30,6 @@ function mockUserWithVariant(variant = 'a') {
   return { name: `Dummy ${variant}`, email: `dummy_${variant}@dummy.com` };
 }
 
-function createUserWithVariant(variant) {
-  return createUser(mockUserWithVariant(variant));
-}
-
 function createUser(user) {
   return request
     .post('/graphql')
@@ -46,6 +42,10 @@ function createUser(user) {
     .set('Accept', 'application/json')
     .expect('Content-Type', /json/)
     .expect(200);
+}
+
+function createUserWithVariant(variant) {
+  return createUser(mockUserWithVariant(variant));
 }
 
 it('fetch users', async (done) => {
