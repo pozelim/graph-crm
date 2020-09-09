@@ -1,31 +1,29 @@
 /* eslint-disable no-undef */
 import supertest from 'supertest';
 import mockedEnv from 'mocked-env';
-import app from '../src/server';
-import { getDataBase } from '../src/database';
+import makeApp from '../src/server';
+import { startDatabase, getDataBase } from '../src/database';
 
 const DB_TEST_FILE = 'db-test_company_resolvers.json';
+let request;
 
 mockedEnv({
   DB_FILE: DB_TEST_FILE,
 });
 
-const request = supertest(app);
-
-function tearDown() {
+async function tearDown() {
   const db = getDataBase();
   if (db) {
-    db.set('companies', []).write();
+    await db.set('companies', []).write();
   }
 }
 
-afterAll(() => {
-  tearDown();
+beforeAll(async () => {
+  const db = await startDatabase();
+  request = supertest(makeApp({ db }));
 });
 
-beforeEach(() => {
-  tearDown();
-});
+beforeEach(tearDown);
 
 function mockInputWithVariant(variant = 'a') {
   return { name: `Dummy company ${variant}` };

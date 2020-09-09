@@ -1,7 +1,7 @@
 /* src/database.js */
 
 import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
+import FileAsync from 'lowdb/adapters/FileAsync';
 import fs from 'fs';
 
 const DATA_DIR = '.data';
@@ -12,13 +12,13 @@ async function startDatabase() {
     fs.mkdirSync(DATA_DIR);
   }
 
-  const adapter = new FileSync(
+  const adapter = new FileAsync(
     `${DATA_DIR}/${process.env.DB_FILE || 'db.json'}`
   );
-  db = low(adapter);
+  db = await low(adapter);
 
   // Set some defaults (required if your JSON file is empty)
-  db.defaults({ users: [], companies: [] }).write();
+  await db.defaults({ users: [], companies: [] }).write();
 
   return db;
 }

@@ -1,7 +1,9 @@
-import userResolvers from './user';
-import companyResolvers from './company';
+import makeUserResolvers from './user';
+import makeCompanyResolvers from './company';
 
-export default {
-  ...userResolvers,
-  ...companyResolvers,
-};
+export default function makeResolvers(props) {
+  return {
+    ...makeUserResolvers(props),
+    ...makeCompanyResolvers(props),
+  };
+}

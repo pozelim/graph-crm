@@ -5,23 +5,19 @@ function isDuplicated(db, input) {
   return !!db.get('companies').find({ name }).value();
 }
 
-const userResolvers = {
-  company: async ({ id }, context) => {
-    const { db } = await context();
-    return db.get('companies').find({ id }).value();
-  },
-  createCompany: async ({ input }, context) => {
-    const { name } = input;
-    const { db } = await context();
+export default function makeUserResolvers({ db }) {
+  return {
+    company: async ({ id }) => db.get('companies').find({ id }).value(),
+    createCompany: async ({ input }) => {
+      const { name } = input;
 
-    if (isDuplicated(db, input)) {
-      throw new Error('Name is already in use');
-    } else {
-      const company = { id: uuidv4(), name };
-      db.get('companies').push(company).write();
-      return company;
-    }
-  },
-};
-
-export default userResolvers;
+      if (isDuplicated(db, input)) {
+        throw new Error('Name is already in use');
+      } else {
+        const company = { id: uuidv4(), name };
+        await db.get('companies').push(company).write();
+        return company;
+      }
+    },
+  };
+}
