@@ -8,11 +8,18 @@ import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
 import schema from './schema';
 import makeResolvers from './resolvers';
+import UserServer from './services/user_service';
 import { login, verifyJwt } from './login';
 
 dotenv.config();
 
-export default function makeApp({ db }) {
+function resolveDependencies(props) {
+  const { db } = props;
+  const userService = new UserServer(db);
+  return { db, userService };
+}
+
+export default function makeApp(props) {
   const app = express();
 
   app.use(
@@ -26,7 +33,7 @@ export default function makeApp({ db }) {
     '/graphql',
     graphqlHTTP({
       schema,
-      rootValue: makeResolvers({ db }),
+      rootValue: makeResolvers(resolveDependencies(props)),
     })
   );
 
