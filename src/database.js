@@ -3,6 +3,7 @@
 import low from 'lowdb';
 import FileAsync from 'lowdb/adapters/FileAsync';
 import fs from 'fs';
+import { Service } from 'typedi';
 
 const DATA_DIR = '.data';
 let db;
@@ -27,4 +28,4 @@ function getDataBase() {
   return db;
 }
 
-export { startDatabase, getDataBase };
+export default Service([], () => ({ startDatabase, getDataBase }));
