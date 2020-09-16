@@ -1,31 +1,13 @@
 /* eslint-disable no-undef */
-import supertest from 'supertest';
-import mockedEnv from 'mocked-env';
-import { Container } from 'typedi';
-import makeApp from '../../src/server';
-import DataBase from '../../src/database';
+import { setup, tearDown } from './base';
 
-const DB_TEST_FILE = 'db-test_company_resolvers.json';
 let request;
-const dataBase = Container.get(DataBase);
 
-mockedEnv({
-  DB_FILE: DB_TEST_FILE,
-});
-
-async function tearDown() {
-  const db = dataBase.getDataBase();
-  if (db) {
-    await db.set('companies', []).write();
-  }
-}
+beforeEach(async () => tearDown(async (db) => db.set('companies', []).write()));
 
 beforeAll(async () => {
-  const db = await dataBase.startDatabase();
-  request = supertest(makeApp({ db }));
+  request = await setup();
 });
-
-beforeEach(tearDown);
 
 function mockInputWithVariant(variant = 'a') {
   return { name: `Dummy company ${variant}` };
