@@ -3,24 +3,17 @@
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
 import expressPlayground from 'graphql-playground-middleware-express';
+import { Container } from 'typedi';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
-import { Container } from 'typedi';
 import schema from './schema';
-import makeResolvers from './resolvers';
-import UserServer from './services/user_service';
+import Resolvers from './resolvers';
 import { login, verifyJwt } from './login';
 
 dotenv.config();
 
-function resolveDependencies(props) {
-  const { db } = props;
-  const userService = Container.get(UserServer);
-  return { db, userService };
-}
-
-export default function makeApp(props) {
+export default function makeApp() {
   const app = express();
 
   app.use(
@@ -34,7 +27,7 @@ export default function makeApp(props) {
     '/graphql',
     graphqlHTTP({
       schema,
-      rootValue: makeResolvers(resolveDependencies(props)),
+      rootValue: Container.get(Resolvers),
     })
   );
 

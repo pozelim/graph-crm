@@ -8,7 +8,7 @@ const port = process.env.PORT || '4000';
 
 Container.get(DataBase)
   .startDatabase()
-  .then((db) => {
-    makeApp({ db }).listen(port);
+  .then(() => {
+    makeApp().listen(port);
     console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
   });

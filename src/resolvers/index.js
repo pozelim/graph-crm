@@ -1,9 +1,11 @@
-import makeUserResolvers from './user';
-import makeCompanyResolvers from './company';
+import { Service } from 'typedi';
+import UserResolvers from './user';
+import CompanyResolvers from './company';
 
-export default function makeResolvers(props) {
-  return {
-    ...makeUserResolvers(props),
-    ...makeCompanyResolvers(props),
-  };
-}
+export default Service(
+  [UserResolvers, CompanyResolvers],
+  (userResolvers, companyResolvers) => ({
+    ...userResolvers,
+    ...companyResolvers,
+  })
+);
