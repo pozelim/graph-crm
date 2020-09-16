@@ -6,6 +6,7 @@ import expressPlayground from 'graphql-playground-middleware-express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
+import { Container } from 'typedi';
 import schema from './schema';
 import makeResolvers from './resolvers';
 import UserServer from './services/user_service';
@@ -15,7 +16,7 @@ dotenv.config();
 
 function resolveDependencies(props) {
   const { db } = props;
-  const userService = new UserServer(db);
+  const userService = Container.get(UserServer);
   return { db, userService };
 }
 

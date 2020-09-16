@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import emailValidator from 'email-validator';
+import DataBase from '../database';
 
 export default class UserService {
-  constructor(db) {
-    this.db = db;
+  constructor(container) {
+    this.db = container.get(DataBase).getDataBase();
   }
 
   isDuplicated(user) {

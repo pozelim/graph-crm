@@ -6,9 +6,6 @@ export default function makeUserResolvers({ userService }) {
       const user = await userService.createUser(input);
       return user;
     },
-    updateUser: async ({ input }) => {
-      const user = await userService.updateUser(input);
-      return user;
-    },
+    updateUser: async ({ input }) => userService.updateUser(input),
   };
 }
