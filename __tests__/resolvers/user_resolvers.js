@@ -2,15 +2,22 @@
 import { setup, tearDown } from './base';
 
 let request;
+const companyId = 'mock_company_id';
 
 beforeEach(async () => tearDown(async (db) => db.set('users', []).write()));
 
 beforeAll(async () => {
-  request = await setup();
+  const setupResponse = await setup();
+  request = setupResponse.request;
+  await setupResponse.db.set('companies', [{ id: companyId }]).write();
 });
 
-function mockUserWithVariant(variant = 'a') {
-  return { name: `Dummy ${variant}`, email: `dummy_${variant}@dummy.com` };
+function mockUserWithVariant(variant = 'a', props) {
+  return {
+    name: `Dummy ${variant}`,
+    email: `dummy_${variant}@dummy.com`,
+    ...props,
+  };
 }
 
 function createUser(user) {
@@ -20,6 +27,7 @@ function createUser(user) {
       query: `mutation { createUser(input: {
         name: "${user.name}",
         email: "${user.email}",
+        companyId: "${user.companyId}",
       }) { id }}`,
     })
     .set('Accept', 'application/json')
@@ -28,7 +36,7 @@ function createUser(user) {
 }
 
 function createUserWithVariant(variant) {
-  return createUser(mockUserWithVariant(variant));
+  return createUser(mockUserWithVariant(variant, { companyId }));
 }
 
 it('fetch users', async (done) => {

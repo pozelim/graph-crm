@@ -6,7 +6,8 @@ const schema = buildSchema(`
     type User {
         id: ID!
         name: String!
-        email: String
+        email: String!
+        companyID: String!
     }
 
     type Company {
@@ -23,6 +24,7 @@ const schema = buildSchema(`
     input CreateUserInput {
         name: String!
         email: String!
+        companyId: String!
     }
 
     input UpdateUserInput {

@@ -18,7 +18,7 @@ async function startDatabase() {
   );
   db = await low(adapter);
 
-  await db.defaults({ users: [], companies: [] }).write();
+  await db.defaults({ users: [], companies: [], customers: [] }).write();
 
   return db;
 }

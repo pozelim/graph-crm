@@ -21,13 +21,16 @@ export default class UserService {
   }
 
   async createUser(input) {
-    const { email, name } = input;
+    const { email, name, companyId } = input;
+    if (!this.db.get('companies').find({ id: companyId }).value()) {
+      throw new Error('Company not found');
+    }
     if (this.isDuplicated(input)) {
       throw new Error('Email is already in use');
     } else if (!emailValidator.validate(email)) {
       throw new Error('Invalid email');
     } else {
-      const user = { id: uuidv4(), name, email };
+      const user = { id: uuidv4(), name, email, companyId };
       await this.db.get('users').push(user).write();
       return user;
     }

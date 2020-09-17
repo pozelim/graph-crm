@@ -16,7 +16,7 @@ export async function setup() {
     DB_FILE: DB_TEST_FILE,
   });
   const db = await dataBase.startDatabase();
-  return supertest(makeApp({ db }));
+  return { request: supertest(makeApp({ db })), db };
 }
 
 export async function tearDown(callback) {

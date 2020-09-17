@@ -6,7 +6,7 @@ let request;
 beforeEach(async () => tearDown(async (db) => db.set('companies', []).write()));
 
 beforeAll(async () => {
-  request = await setup();
+  request = (await setup()).request;
 });
 
 function mockInputWithVariant(variant = 'a') {
