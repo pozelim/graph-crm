@@ -18,7 +18,6 @@ async function startDatabase() {
   );
   db = await low(adapter);
 
-  // Set some defaults (required if your JSON file is empty)
   await db.defaults({ users: [], companies: [] }).write();
 
   return db;
