@@ -30,7 +30,12 @@ export default class UserService {
     } else if (!emailValidator.validate(email)) {
       throw new Error('Invalid email');
     } else {
-      const user = { id: uuidv4(), name, email, companyId };
+      const user = {
+        id: uuidv4(),
+        name,
+        email,
+        companyId,
+      };
       await this.db.get('users').push(user).write();
       return user;
     }

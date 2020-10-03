@@ -1,13 +1,14 @@
 /* src/server.js */
 
 import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
 import expressPlayground from 'graphql-playground-middleware-express';
+import { ApolloServer, gql } from 'apollo-server-express';
 import { Container } from 'typedi';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
-import schema from './schema';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import Resolvers from './resolvers';
 import { login, verifyJwt } from './login';
 
@@ -23,13 +24,16 @@ export default function makeApp() {
     verifyJwt
   );
 
-  app.use(
-    '/graphql',
-    graphqlHTTP({
-      schema,
-      rootValue: Container.get(Resolvers),
-    })
+  const typeDefs = gql(
+    readFileSync(resolve(__dirname, 'schema.graphql'), { encoding: 'utf8' })
   );
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers: Container.get(Resolvers),
+  });
+
+  server.applyMiddleware({ app, path: '/graphql' });
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
