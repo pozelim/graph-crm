@@ -28,7 +28,6 @@ node_modules/
 
 # dotenv environment variables file
 .env
-.env.test
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
@@ -37,3 +36,5 @@ node_modules/
 
 coverage/
 .badges/
+
+prisma/data.db

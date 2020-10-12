@@ -1,30 +1,12 @@
 /* src/database.js */
 
-import low from 'lowdb';
-import FileAsync from 'lowdb/adapters/FileAsync';
-import fs from 'fs';
+import { PrismaClient } from '@prisma/client';
 import { Service } from 'typedi';
 
-const DATA_DIR = '.data';
-let db;
-
-async function startDatabase() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR);
-  }
-
-  const adapter = new FileAsync(
-    `${DATA_DIR}/${process.env.DB_FILE || 'db.json'}`
-  );
-  db = await low(adapter);
-
-  await db.defaults({ users: [], companies: [], customers: [] }).write();
-
-  return db;
-}
+const prisma = new PrismaClient();
 
 function getDataBase() {
-  return db;
+  return prisma;
 }
 
-export default Service([], () => ({ startDatabase, getDataBase }));
+export default Service([], () => ({ getDataBase }));

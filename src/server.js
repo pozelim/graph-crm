@@ -12,7 +12,8 @@ import { resolve } from 'path';
 import Resolvers from './resolvers';
 import { login, verifyJwt } from './login';
 
-dotenv.config();
+const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
+dotenv.config({ path: envFile });
 
 export default function makeApp() {
   const app = express();

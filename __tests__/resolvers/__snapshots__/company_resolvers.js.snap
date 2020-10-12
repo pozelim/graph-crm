@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create company 1`] = `
+Object {
+  "data": Object {
+    "createCompany": Object {
+      "name": "dummy",
+    },
+  },
+}
+`;
+
+exports[`get company by id 1`] = `
+Object {
+  "data": Object {
+    "company": Object {
+      "name": "company1",
+    },
+  },
+}
+`;

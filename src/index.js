@@ -1,14 +1,12 @@
 /* src/index.js */
 
-import { Container } from 'typedi';
+import dotenv from 'dotenv';
 import makeApp from './server';
-import DataBase from './database';
+
+const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
+dotenv.config({ path: envFile });
 
 const port = process.env.PORT || '4000';
 
-Container.get(DataBase)
-  .startDatabase()
-  .then(() => {
-    makeApp().listen(port);
-    console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
-  });
+makeApp().listen(port);
+console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
