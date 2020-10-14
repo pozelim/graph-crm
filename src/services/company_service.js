@@ -21,4 +21,22 @@ export default class CompanyService {
       },
     });
   }
+
+  getUsers(id, { skip, take }) {
+    const where = { companyId: id };
+    const count = this.prisma.user.count({
+      where,
+    });
+
+    const users = this.prisma.user.findMany({
+      where,
+      skip,
+      take,
+    });
+
+    return {
+      count,
+      users,
+    };
+  }
 }

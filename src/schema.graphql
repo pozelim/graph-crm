@@ -5,9 +5,15 @@ type User {
   companyID: String!
 }
 
+type Users {
+  count: Int!
+  users: [User!]!
+}
+
 type Company {
   id: ID!
   name: String!
+  users(take: Int, skip: Int): Users!
 }
 
 type Query {

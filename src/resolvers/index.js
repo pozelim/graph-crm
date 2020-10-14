@@ -4,16 +4,19 @@ import CompanyResolvers from './company';
 
 export default Service(
   [UserResolvers, CompanyResolvers],
-  (userResolvers, companyResolvers) => ({
-    Query: {
-      user: userResolvers.user,
-      users: userResolvers.users,
-      company: companyResolvers.company,
-    },
-    Mutation: {
-      createUser: userResolvers.createUser,
-      updateUser: userResolvers.updateUser,
-      createCompany: companyResolvers.createCompany,
-    },
-  })
+  (userResolvers, companyResolvers) => {
+    const { UserQuery, UserMutation } = userResolvers;
+    const { CompanyQuery, CompanyMutation, Company } = companyResolvers;
+    return {
+      Query: {
+        ...UserQuery,
+        ...CompanyQuery,
+      },
+      Mutation: {
+        ...UserMutation,
+        ...CompanyMutation,
+      },
+      Company,
+    };
+  }
 );
